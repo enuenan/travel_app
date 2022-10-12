@@ -12,17 +12,39 @@
 // < --------------- before using fetch data --------------->
 
 import { useRoute } from "vue-router";
-const response = await fetch(`http://localhost:3000/destinations/${useRoute().params.id}`);
-const destination = await response.json();
-console.log(destination.name);
+import { ref, watch } from "vue";
+import ExperienceCard from "@/components/ExperienceCard.vue";
+
+const route = useRoute();
+const destination = ref();
+const id = route.params.id;
+
+const response = (id) => {
+    fetch(`http://localhost:3000/destinations/${id}`)
+        .then((response) => response.json())
+        .then((data) => (destination.value = data));
+};
+response(id);
+watch(
+    () => route.params.id
+    // async (newId) => {
+    //     response(newId);
+    // }
+);
 </script>
 
 <template>
-    <div v-if="destination">
+    <section v-if="destination">
         <h1>{{ destination.name }}</h1>
         <div class="destination-details">
             <img :src="`/images/${destination.image}`" :alt="destination.name" />
             <p>{{ destination.description }}</p>
         </div>
-    </div>
+    </section>
+    <section class="experiences" v-if="destination">
+        <h2>Top experiences in {{ destination.name }}</h2>
+        <div class="cards">
+            <ExperienceCard v-for="experience in destination.experiences" :key="experience.slug" :experience="experience" />
+        </div>
+    </section>
 </template>

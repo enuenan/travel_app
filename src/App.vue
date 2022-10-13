@@ -5,6 +5,6 @@ import Navigation from "@/components/Navigation.vue";
 <template>
     <Navigation></Navigation>
     <div class="container">
-        <router-view :key="$route.path" />
+        <router-view />
     </div>
 </template>
